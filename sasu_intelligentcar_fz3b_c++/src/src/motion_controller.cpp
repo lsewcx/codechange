@@ -93,12 +93,11 @@ public:
         }
 
         params.turnP = abs(error) * params.runP2 + params.runP1;
-        turnP = max(turnP,0.2);
-        if(turnP<0.2){
-            turnP = 0.2;
-        }
-        turnP = runP1 + heightest_line * runP2;
-
+        // turnP = max(turnP,0.2);
+        //  if(turnP<0.2){
+        //      turnP = 0.2;
+        //  }
+        // turnP = runP1 + heightest_line * runP2;
 
         int pwmDiff = (error * params.turnP) + (error - errorLast) * params.turnD;
         errorLast = error;

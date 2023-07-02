@@ -1,5 +1,7 @@
 {
     "files.associations": {
+        ".eslintrc": "json",
+        "*.vue": "html",
         "memory": "cpp",
         "condition_variable": "cpp",
         "mutex": "cpp",
@@ -64,6 +66,9 @@
         "xhash": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "string_view": "cpp"
     }
 }

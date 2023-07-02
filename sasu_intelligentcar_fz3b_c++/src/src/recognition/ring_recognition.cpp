@@ -69,9 +69,9 @@ public:
 
     bool ringEnable = false;                    // 判环标志
     RingType ringTypeTemp = RingType::RingNone; // 环岛类型：临时变量
-    int rowBreakpointLeft = 0;  // 边缘拐点起始行（左）
-    int rowBreakpointRight = 0; // 边缘拐点起始行（右）
-    int colEnterRing = 0;       // 入环点（图像列序号）
+    int rowBreakpointLeft = 0;       // 边缘拐点起始行（左）
+    int rowBreakpointRight = 0;      // 边缘拐点起始行（右）
+    int colEnterRing = 0;            // 入环点（图像列序号）
     int rowRepairRingside =
         track.widthBlock.size() - 1; // 环一侧，补线起点（行号）
     int rowRepairStraightside =
@@ -128,8 +128,9 @@ public:
       if (track.widthBlock[i].y > track.widthBlock[i - 1].y &&
           track.widthBlock[i].y > COLSIMAGE * 0.6 &&
           track.widthBlock[i].x > 30 &&
-          ((track.stdevLeft > 120 && track.stdevRight < 50) ||
+          ((track.stdevLeft > 150 && track.stdevRight < 30) || // 120    50
            ringStep == RingStep::Entering)) // 搜索突然变宽的路径行数
+                                            // stdevLeft左斜率  斜率应该要调小
       {
         ++countWide;
       } else {
@@ -182,10 +183,10 @@ public:
           countWide = 0;
         }
       }
-      /*if(ringStep == RingStep::Entering && ringEnable == false){
-          ringEnable = true;
-          rowRepairStraightside = rowRepairLine;
-      }*/
+      if (ringStep == RingStep::Entering && ringEnable == false) {
+        ringEnable = true;
+        rowRepairStraightside = rowRepairLine;
+      }
 
       if (ringEnable == true && ringStep == RingStep::Entering) {
         if (ringTypeTemp == RingType::RingLeft) {

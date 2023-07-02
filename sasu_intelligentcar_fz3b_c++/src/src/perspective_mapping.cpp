@@ -1,5 +1,4 @@
 #pragma once
-
 /**
  ********************************************************************************************************
  *                                               示例代码
@@ -56,7 +55,7 @@ public:
         m_origPoints.push_back(Point2f(192, 0));   // 右上
         m_origPoints.push_back(Point2f(128, 0));   // 左上
 
-        // 矫正域：分辨率320x240
+        // 矫正域：分辨率320x240  透视后坐标
         // The 4-points correspondences in the destination image
         m_dstPoints.clear();
         m_dstPoints.push_back(Point2f(100, 400)); // 左下
@@ -71,6 +70,7 @@ public:
         m_H_inv = m_H.inv();                                      // 求解逆转换矩阵
 
         createMaps();
+
     }
 
     /**

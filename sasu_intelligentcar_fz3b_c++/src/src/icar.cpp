@@ -36,6 +36,8 @@
 #include "recognition/garage_recognition.cpp"   //车库及斑马线识别类
 #include "recognition/ring_recognition.cpp"     //环岛道路识别与路径规划类
 #include "recognition/track_recognition.cpp"    //赛道识别基础类
+#include "image_preprocess.cpp"
+#include "path_searching.cpp"
 #include <iostream>
 #include <opencv2/highgui.hpp> //OpenCV终端部署
 #include <opencv2/opencv.hpp>  //OpenCV终端部署
@@ -87,6 +89,8 @@ int main(int argc, char const *argv[])
   uint16_t counterOutTrackB = 0;                  // 车辆冲出赛道计数器B
   uint16_t circlesThis = 1;                       // 智能车当前运行的圈数
   uint16_t countercircles = 0;                    // 圈数计数器
+  ImagePreprocess image123;
+  PathSearching path1;
 
   // USB转串口的设备名为 / dev/ttyUSB0
   driver = std::make_shared<Driver>("/dev/ttyUSB0", BaudRate::BAUD_115200);
@@ -141,7 +145,8 @@ int main(int argc, char const *argv[])
 
     for (int i = 0; i < 30; i++) // 3秒后发车
     {
-      driver->carControl(0, PWMSERVOMID); // 智能车停止运动|建立下位机通信
+      cout<<i<<endl;
+      driver->carControl(0, PWMSERVOMID); // 智能车停止运动|建立下位机通信                            
       waitKey(100);
     }
   }
@@ -167,6 +172,9 @@ int main(int argc, char const *argv[])
     std::shared_ptr<DetectionResult> resultAI =
         detection->getLastFrame();   // 获取Paddle多线程模型预测数据
     Mat frame = resultAI->rgb_frame; // 获取原始摄像头图像
+
+
+
     if (motionController.params.debug)
     {
       savePicture(resultAI->det_render_frame);
@@ -179,10 +187,15 @@ int main(int argc, char const *argv[])
 
     //[02] 图像预处理
     Mat imgaeCorrect = imagePreprocess.imageCorrection(frame);         // RGB
+
+    //摄像头这边改
     Mat imageBinary = imagePreprocess.imageBinaryzation(imgaeCorrect); // Gray
+    Mat fram123 = path1.pathSearch(imageBinary);
+    Mat fram1234 = imagePreprocess.imageBinaryzation(fram123);
+    //路径搜索
 
     //[03] 基础赛道识别
-    trackRecognition.trackRecognition(imageBinary); // 赛道线识别
+    trackRecognition.trackRecognition(fram1234); // 赛道线识别
     if (motionController.params.debug)
     {
       Mat imageTrack = imgaeCorrect.clone();  // RGB
@@ -427,7 +440,7 @@ int main(int argc, char const *argv[])
       if (roadType == RoadType::RingHandle ||
           roadType == RoadType::BaseHandle)
       {
-        if (ringRecognition.ringRecognition(trackRecognition, imageBinary))
+        if (ringRecognition.ringRecognition(trackRecognition,fram1234))
         {
           if (roadType == RoadType::BaseHandle) // 初次识别-蜂鸣器提醒
             driver->buzzerSound(1);             // OK

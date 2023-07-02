@@ -59,9 +59,7 @@ public:
         track.stdevLeft = track.stdevEdgeCal(track.pointsEdgeLeft, ROWSIMAGE);
         track.stdevRight = track.stdevEdgeCal(track.pointsEdgeRight, ROWSIMAGE);
 
-        // 边缘有效行优化(数字需要注意)
-        // if ((track.stdevLeft < 30 && track.stdevRight > 70) ||
-        //(track.stdevLeft > 60 && track.stdevRight < 30))
+        // 边缘有效行优化
         if ((track.stdevLeft < 80 && track.stdevRight > 50) || (track.stdevLeft > 60 && track.stdevRight < 50))
         {
             validRowsCal(track.pointsEdgeLeft, track.pointsEdgeRight); // 边缘有效行计算
