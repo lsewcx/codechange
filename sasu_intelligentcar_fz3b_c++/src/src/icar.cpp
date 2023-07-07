@@ -434,16 +434,18 @@ int main(int argc, char const *argv[])
               driver->buzzerSound(1);             // OK
 
             roadType = RoadType::RingHandle;
-            if (motionController.params.debug)
-            {
-              Mat imageRing =
-                  Mat::zeros(Size(COLSIMAGE, ROWSIMAGE), CV_8UC3); // 初始化图像
-              ringRecognition.drawImage(trackRecognition, imageRing);
-              imshow("imageRecognition", imageRing);
-              imshowRec = true;
-              savePicture(imageRing);
-            }
+            // if (motionController.params.debug)
+            // {
+            //   Mat imageRing =
+            //       Mat::zeros(Size(COLSIMAGE, ROWSIMAGE), CV_8UC3); // 初始化图像
+            //   ringRecognition.drawImage(trackRecognition, imageRing);
+            //   imshow("imageRecognition", imageRing);
+            //   imshowRec = true;
+            //   savePicture(imageRing);
+            // }
           }
+          else
+            roadType = RoadType::BaseHandle;
         }
         else if(motionController.params.ringDirection == 1)
         {
@@ -454,9 +456,9 @@ int main(int argc, char const *argv[])
 
             roadType = RoadType::RingHandle;
           }
+          else
+            roadType = RoadType::BaseHandle;
         }
-        else
-          roadType = RoadType::BaseHandle;
       }
     }
 
@@ -519,8 +521,13 @@ int main(int argc, char const *argv[])
       if(roadType != RoadType::RingHandle)
         motionController.pdController(
             controlCenterCal.controlCenter); // PD控制器姿态控制
-      else if(roadType == RoadType::RingHandle) motionController.RingpdController(controlCenterCal.controlCenter);
-      
+      else if(roadType == RoadType::RingHandle)
+      { 
+        if(motionController.params.ringDirection == 0)
+          motionController.RingpdController(controlCenterCal.controlCenter);
+        else if(motionController.params.ringDirection == 1)
+          motionController.RightRingpdController(controlCenterCal.controlCenter);
+      }
       // 智能汽车速度控制
       switch (roadType)
       {

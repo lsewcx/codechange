@@ -61,7 +61,7 @@ public:
    * @param track 基础赛道识别结果
    * @param imagePath 赛道路径图像
    */
-  bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
+   bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
     if (counterShield < 40) {
       counterShield++;
       return false;
@@ -132,9 +132,7 @@ public:
            ringStep == RingStep::Entering)) // 搜索突然变宽的路径行数
       {
         ++countWide;
-      } 
-      else 
-      {
+      } else {
         countWide = 0;
       }
       // [1] 入环判断

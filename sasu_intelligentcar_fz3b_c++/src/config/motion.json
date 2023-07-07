@@ -13,6 +13,8 @@
     "turnD": 3.5,
     "ringP1": 1.7,
     "ringP2": 0.0095,
+    "rightP1": 1.7,
+    "rightP2": 0.009,
     "ringDirection": 1,
     "debug": false,
     "saveImage": false,
