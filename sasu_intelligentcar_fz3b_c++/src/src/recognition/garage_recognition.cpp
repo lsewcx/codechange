@@ -114,22 +114,15 @@ public:
    *
    * @param track
    */
-  bool garageRecognition(TrackRecognition &track, vector<PredictResult> predict)    //赛道信息   视频源
+  bool garageRecognition(TrackRecognition &track, vector<PredictResult> predict)
   {
-      //单次出库判定
-      //出库左右方向选择   false左转     true右转
-      bool SeltGarageRecognition = false;
     if (garageStep == GarageStep::GarageExiting) // 出库阶段
     {
-        if (SeltGarageRecognition == false ) {
-            garageExitRecognition(track);
-        } else {
-            My_garageExitRecognition(track);
-        }
+      garageExitRecognition(track);
     }
     else if (entryEnable) // 入库阶段：入库使能
     {
-      // garageEntryRecognition(track, predict);
+     // garageEntryRecognition(track, predict);
       garageEntryRec(track, predict);
     }
 
@@ -480,33 +473,33 @@ public:
       POINT startPoint;
       POINT endPoint;
       POINT midPoint;
-      if (track.spurroad.size() < 3 || (track.stdevLeft < 100 && track.stdevRight < 100)) // 离开斑马线 岔路点集小于3 左右斜率方差小于100
+      if (track.spurroad.size() < 3 || (track.stdevLeft < 100 && track.stdevRight < 100)) // 离开斑马线
       {
-        counterExitOut++;   //出库完成度加一
-        if (counterExitOut >= 5)    //完成度达到一定程度出库状态改变
+        counterExitOut++;
+        if (counterExitOut >= 5)
           garageStep = GarageStep::GarageEntryRecognition; // 出库完成
       }
       else
       {
-        counterExitOut = 0; //连续突变点不足有误差 重头检测
+        counterExitOut = 0;
       }
 
-      if (track.pointsEdgeLeft.size() <= 1 || track.pointsEdgeRight.size() <= 1) // 图像异常  左右边缘点集数量不足
+      if (track.pointsEdgeLeft.size() <= 1 || track.pointsEdgeRight.size() <= 1) // 图像异常
         return;
 
-      uint16_t rowBreakLeft = searchBreakLeft(track.pointsEdgeLeft);    // 左上拐点搜索   左转突变点
+      uint16_t rowBreakLeft = searchBreakLeft(track.pointsEdgeLeft);    // 左上拐点搜索
       uint16_t rowBreakRight = searchBreakRight(track.pointsEdgeRight); // 右下补线点搜索
 
-      if (track.pointsEdgeRight[rowBreakRight].x < ROWSIMAGE * 0.5) // 避免出库提前转向优化  右侧点小于图像一半
+      if (track.pointsEdgeRight[rowBreakRight].x < ROWSIMAGE * 0.65) // 避免出库提前转向优化
       {
-        track.pointsEdgeRight.resize(rowBreakRight);  //删除补线点后右侧车道线点，保留跳变点之前的点
-        if (rowBreakLeft > rowBreakRight)   //左跳变点大于右跳变点
-          track.pointsEdgeLeft.resize(rowBreakLeft);  //删除拐点后左侧车道线点，保留拐点之前的点
+        track.pointsEdgeRight.resize(rowBreakRight);
+        if (rowBreakLeft > rowBreakRight)
+          track.pointsEdgeLeft.resize(rowBreakLeft);
 
         return;
       }
 
-      if (rowBreakLeft >= track.pointsEdgeRight.size()) //保证左右车道线点集对应
+      if (rowBreakLeft >= track.pointsEdgeRight.size())
       {
         rowBreakLeft = track.pointsEdgeRight.size() - 1;
       }
@@ -550,117 +543,6 @@ public:
       }
     }
   }
-
-
-    /**
-   * @brief 出库识别与路径规划
-   *
-   * @param track
-   */
-    void My_garageExitRecognition(TrackRecognition &track)
-    {
-        _pointRU = POINT(0, 0);
-        _pointLU = POINT(0, 0);
-        _pointRD = POINT(0, 0);
-        _Index = "";
-
-        if (garageStep == GarageStep::GarageExiting) // 出库中
-        {
-            POINT startPoint;
-            POINT endPoint;
-            POINT midPoint;
-            if (track.spurroad.size() < 3 || (track.stdevLeft < 100 && track.stdevRight < 100)) // 离开斑马线 岔路点集小于3 左右斜率方差小于100
-            {
-                counterExitOut++;   //出库完成度加一
-                if (counterExitOut >= 5)    //完成度达到一定程度出库状态改变
-                    garageStep = GarageStep::GarageEntryRecognition; // 出库完成
-            }
-            else
-            {
-                counterExitOut = 0; //连续突变点不足有误差 重头检测
-            }
-
-            if (track.pointsEdgeLeft.size() <= 1 || track.pointsEdgeRight.size() <= 1) // 图像异常  左右边缘点集数量不足
-                return;
-
-            uint16_t rowBreakRight = My_searchBreakLeft(track.pointsEdgeRight);    // 右上拐点搜索   右转突变点
-            uint16_t rowBreakLeft = My_searchBreakRight(track.pointsEdgeLeft); // 左下补线点搜索
-
-            if (track.pointsEdgeLeft[rowBreakLeft].x < ROWSIMAGE * 0.5) // 避免出库提前转向优化  左侧点小于图像一半
-            {
-                track.pointsEdgeLeft.resize(rowBreakLeft);  //删除补线点后左侧车道线点，保留跳变点之前的点
-                if (rowBreakLeft < rowBreakRight)   //左跳变点小于右跳变点
-                    track.pointsEdgeRight.resize(rowBreakRight);  //删除拐点后右侧车道线点，保留拐点之前的点
-
-                return;
-            }
-
-            if (rowBreakRight >= track.pointsEdgeLeft.size()) //保证左右车道线点集对应
-            {
-                rowBreakRight = track.pointsEdgeLeft.size() - 1;
-            }
-
-            startPoint = track.pointsEdgeLeft[rowBreakLeft]; // 入库补线起点
-            _pointLU = startPoint;
-            _pointRD = track.pointsEdgeRight[rowBreakRight];
-
-            // 依赖岔路补线
-            if (track.spurroad.size() > 2)
-            {
-                endPoint = searchBestSpurroad(track.spurroad); // 入库补线终点
-
-                //if (startPoint.x > endPoint.x && startPoint.y > endPoint.y) // 补线起点和终点正确性校验
-                //{
-                    // 斑马线左边部分补线
-                    midPoint = POINT((startPoint.x + endPoint.x) * 0.4, (startPoint.y + endPoint.y) * 0.5); // 入库补线中点
-                    _pointRU = endPoint;
-                    vector<POINT> repairPoints = {startPoint, midPoint, endPoint};
-                    vector<POINT> modifyEdgeRight = Bezier(0.04, repairPoints); // 三阶贝塞尔曲线拟合
-                    track.pointsEdgeLeft.resize(rowBreakLeft);               // 删除无效点
-                    for (int i = 0; i < modifyEdgeRight.size(); i++)
-                    {
-                        track.pointsEdgeLeft.push_back(modifyEdgeRight[i]);
-                    }
-                    // 斑马线右边部分补线
-                    startPoint = endPoint;
-                    endPoint = track.pointsEdgeRight[rowBreakRight];
-                    midPoint = POINT((startPoint.x + endPoint.x) * 0.5, (startPoint.y + endPoint.y) * 0.5); // 入库补线中点
-                    repairPoints = {startPoint, midPoint, endPoint};
-                    modifyEdgeRight.resize(0);
-                    modifyEdgeRight = Bezier(0.02, repairPoints); // 三阶贝塞尔曲线拟合
-                    for (int i = 0; i < modifyEdgeRight.size(); i++)
-                    {
-                        track.pointsEdgeLeft.push_back(modifyEdgeRight[i]);
-                    }
-                //}
-//                // 斑马线右边部分补线
-//                midPoint = POINT((startPoint.x + endPoint.x) * 0.4, (startPoint.y + endPoint.y) * 0.5); // 入库补线中点
-//                _pointRU = endPoint;
-//                vector<POINT> repairPoints = {startPoint, midPoint, endPoint};
-//                vector<POINT> modifyEdgeLeft = Bezier(0.04, repairPoints); // 三阶贝塞尔曲线拟合
-//                track.pointsEdgeRight.resize(rowBreakRight);               // 删除无效点
-//                for (int i = 0; i < modifyEdgeLeft.size(); i++)
-//                {
-//                    track.pointsEdgeRight.push_back(modifyEdgeLeft[i]);
-//                }
-//                // 斑马线左边部分补线
-//                startPoint = endPoint;
-//                endPoint = track.pointsEdgeLeft[rowBreakLeft];
-//                midPoint = POINT((startPoint.x + endPoint.x) * 0.5, (startPoint.y + endPoint.y) * 0.5); // 入库补线中点
-//                repairPoints = {startPoint, midPoint, endPoint};
-//                modifyEdgeLeft.resize(0);
-//                modifyEdgeLeft = Bezier(0.02, repairPoints); // 三阶贝塞尔曲线拟合
-//                for (int i = 0; i < modifyEdgeLeft.size(); i++)
-//                {
-//                    track.pointsEdgeRight.push_back(modifyEdgeLeft[i]);
-//                }
-                // 左边缘错误点优化
-                track.pointsEdgeRight.resize(rowBreakRight);
-            }
-
-        }
-    }
-
 
   /**
    * @brief 车库识别结果图像绘制
@@ -848,83 +730,55 @@ private:
   {
     uint16_t rowBreakLeft = pointsEdgeLeft.size() - 1;
     uint16_t counter = 0;
-    for (int i = pointsEdgeLeft.size() - 1; i > 50; i--)    //从赛道底部向上扫描
+    for (int i = pointsEdgeLeft.size() - 1; i > 50; i--)
     {
-      if (pointsEdgeLeft[i].y < 2)  //计算距离赛道边缘的像素距离，如果距离小于2个像素，就将计数器加1，并继续扫描；。
+      if (pointsEdgeLeft[i].y < 2)
       {
         counter++;
-        if (counter > 3)    //如果计数器大于3，则认为已经找到了跳变点，并返回跳变点位置加上3个额外像素作为缓冲。
+        if (counter > 3)
         {
           return i + 3;
         }
       }
-      else  //如果距离大于等于2个像素，就将计数器重置为0
+      else
       {
         counter = 0;
       }
     }
 
-    return rowBreakLeft;    //返回左侧赛道底部作为跳变点
+    return rowBreakLeft;
   }
-    /**
-     * @brief 搜索出库|赛道边缘突变（右上）
-     *
-     * @param pointsEdgeRight
-     * @return uint16_t
-     */
-    uint16_t My_searchBreakLeft(vector<POINT> &pointsEdgeRight)
-    {
-        uint16_t rowBreakRight = pointsEdgeRight.size() - 1;
-        uint16_t counter = 0;
-        for (int i = pointsEdgeRight.size() - 1; i > 50; i--)    //从赛道底部向上扫描
-        {
-            if (pointsEdgeRight[i].y > 290)  //计算距离赛道边缘的像素距离，如果距离小于2个像素，就将计数器加1，并继续扫描；。
-            {
-                counter++;
-                if (counter > 3)    //如果计数器大于3，则认为已经找到了跳变点，并返回跳变点位置加上3个额外像素作为缓冲。
-                {
-                    return i + 3;
-                }
-            }
-            else  //如果距离大于等于2个像素，就将计数器重置为0
-            {
-                counter = 0;
-            }
-        }
 
-        return rowBreakRight;    //返回右侧赛道底部作为跳变点
-    }
   /**
    * @brief 搜索出库|赛道边缘突变（右下）
    *
    * @param pointsEdgeRight
    * @return uint16_t
    */
-  uint16_t searchBreakRight(vector<POINT> pointsEdgeRight)  //返回最近跳变点或补线点位置
+  uint16_t searchBreakRight(vector<POINT> pointsEdgeRight)
   {
     uint16_t rowBreakRight = 0;
     uint16_t counter = 0;
-    if (pointsEdgeRight.size() < 3) //判断右侧边缘点集数据量
+    if (pointsEdgeRight.size() < 3)
       return 0;
 
     if (pointsEdgeRight[0].y >= COLSIMAGE - 20) // 第一个点必须为右下点
     {
-      for (int i = 0; i < pointsEdgeRight.size() - 50; i++) // 向上寻找跳变点
+      for (int i = 0; i < pointsEdgeRight.size() - 50; i++) // 寻找跳变点
       {
         if (pointsEdgeRight[i].y <= pointsEdgeRight[rowBreakRight].y && abs(pointsEdgeRight[i].y - pointsEdgeRight[rowBreakRight].y) < 5)
-        //新的遍历点符合跳变轨迹（最靠近该点）并且突变不超过5像素
         {
-          rowBreakRight = i;    //更新左边边缘点为跳变点
+          rowBreakRight = i;
           counter = 0;
         }
         else // 突变点计数
         {
           counter++;
           if (counter > 3)
-            return rowBreakRight;   //返回跳变点位置并进行补线
+            return rowBreakRight;
         }
       }
-      if (counter <= 3) //未找到合适的跳变点位置 返回2
+      if (counter <= 3)
         return 2;
     }
     else
@@ -936,51 +790,6 @@ private:
 
     return rowBreakRight;
   }
-    /**
-     * @brief 搜索出库|赛道边缘突变（左下）
-     *
-     * @param pointsEdgeLeft
-     * @return uint16_t
-     */
-    uint16_t My_searchBreakRight(vector<POINT> pointsEdgeLeft)  //返回最近跳变点或补线点位置
-    {
-        uint16_t rowBreakLeft = 0;
-        uint16_t counter = 0;
-        if (pointsEdgeLeft.size() < 3) //判断左侧边缘点集数据量
-            return 0;
-
-        if (pointsEdgeLeft[0].y >= COLSIMAGE - 20) // 第一个点必须为左下点
-        {
-            for (int i = 0; i < pointsEdgeLeft.size() - 50; i++) // 向上寻找跳变点
-            {
-                if (pointsEdgeLeft[i].y <= pointsEdgeLeft[rowBreakLeft].y && abs(pointsEdgeLeft[i].y - pointsEdgeLeft[rowBreakLeft].y) < 5)
-                    //新的遍历点符合跳变轨迹（最靠近该点）并且突变不超过5像素
-                {
-                    rowBreakLeft = i;    //更新左边边缘点为跳变点
-                    counter = 0;
-                }
-                else // 突变点计数
-                {
-                    counter++;
-                    if (counter > 3)
-                        return rowBreakLeft;   //返回跳变点位置并进行补线
-                }
-            }
-            if (counter <= 3) //未找到合适的跳变点位置 返回2
-                return 2;
-        }
-        else
-        {
-            pointsEdgeLeft[0].y = COLSIMAGE - 1;
-            _Index = "x";
-            return 0;
-        }
-
-        return rowBreakLeft;
-    }
-
-
-
 
   /**
    * @brief 搜索最佳岔路

@@ -49,11 +49,15 @@ public:
         float speedBridge = 1.0;                        // 坡道（桥）行驶速度
         float speedSlowzone = 1.0;                      // 慢行区行驶速度
         float speedGarage = 1.0;                        // 出入车库速度
+        float speedRing = 1.0;                          // 圆环
         float runP1 = 0.9;                              // 一阶比例系数：直线控制量
         float runP2 = 0.018;                            // 二阶比例系数：弯道控制量
         float runP3 = 0.0;                              // 三阶比例系数：弯道控制量
         float turnP = 3.5;                              // 一阶比例系数：转弯控制量
         float turnD = 3.5;                              // 一阶微分系数：转弯控制量
+        float ringP1 = 0.9;
+        float ringP2 = 0.018;
+        int ringDirection =0;
         bool debug = false;                             // 调试模式使能
         bool saveImage = false;                         // 存图使能
         uint16_t rowCutUp = 10;                         // 图像顶部切行
@@ -70,7 +74,7 @@ public:
         bool SlowzoneEnable = true;                     // 慢行区使能
         uint16_t circles = 2;                           // 智能车运行圈数
         string pathVideo = "../res/samples/sample.mp4"; // 视频路径
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, speedLow, speedHigh, speedDown, speedBridge, speedSlowzone, speedGarage,
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params,ringDirection,ringP1,ringP2,speedRing, speedLow, speedHigh, speedDown, speedBridge, speedSlowzone, speedGarage,
                                        runP1, runP2, runP3, turnP, turnD, debug, saveImage, rowCutUp, rowCutBottom, disGarageEntry,
                                        GarageEnable, BridgeEnable, FreezoneEnable, RingEnable, CrossEnable, GranaryEnable, DepotEnable, FarmlandEnable, SlowzoneEnable, circles, pathVideo); // 添加构造函数
     };
@@ -93,6 +97,29 @@ public:
         }
 
         params.turnP = abs(error) * params.runP2 + params.runP1;
+        // turnP = max(turnP,0.2);
+        //  if(turnP<0.2){
+        //      turnP = 0.2;
+        //  }
+        // turnP = runP1 + heightest_line * runP2;
+
+        int pwmDiff = (error * params.turnP) + (error - errorLast) * params.turnD;
+        errorLast = error;
+
+        servoPwm = (uint16_t)(PWMSERVOMID + pwmDiff); // PWM转换
+    }
+
+
+    void RingpdController(int controlCenter)
+    {
+        float error = controlCenter - COLSIMAGE / 2; // 图像控制中心转换偏差
+        static int errorLast = 0;                    // 记录前一次的偏差
+        if (abs(error - errorLast) > COLSIMAGE / 10)
+        {
+            error = error > errorLast ? errorLast + COLSIMAGE / 10 : errorLast - COLSIMAGE / 10;
+        }
+
+        params.turnP = abs(error) * params.ringP2 + params.ringP1;
         // turnP = max(turnP,0.2);
         //  if(turnP<0.2){
         //      turnP = 0.2;
@@ -195,3 +222,4 @@ public:
         cout << "--- speedLow:" << params.speedLow << "m/s  |  speedHigh:" << params.speedHigh << "m/s" << endl;
     }
 };
+

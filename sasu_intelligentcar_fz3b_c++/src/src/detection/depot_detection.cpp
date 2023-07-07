@@ -122,7 +122,7 @@ public:
 
             searchCones(predict);
             _pointNearCone = searchNearestCone(track.pointsEdgeLeft, pointEdgeDet); // 搜索右下锥桶
-            if (_pointNearCone.x > ROWSIMAGE * 0.6)                                 // 当车辆开始靠近右边锥桶：准备入库
+            if (_pointNearCone.x > ROWSIMAGE * 0.5)                                 // 当车辆开始靠近右边锥桶：准备入库
             {
                 counterRec++;
                 if (counterRec >= 2)
@@ -144,7 +144,7 @@ public:
             if (track.pointsEdgeLeft.size() < ROWSIMAGE / 2 && track.pointsEdgeRight.size() < ROWSIMAGE / 2) // 赛道还未丢失
             {
                 counterRec++;
-                if (counterRec > 10)
+                if (counterRec > 5)
                 {
                     counterRec = 0;
                     depotStep = DepotStep::DepotCruise; // 巡航使能
