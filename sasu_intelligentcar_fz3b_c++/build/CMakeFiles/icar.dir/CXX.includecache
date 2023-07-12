@@ -27,6 +27,8 @@ opencv2/opencv.hpp
 -
 ../src/perspective_mapping.cpp
 /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/perspective_mapping.cpp
+../src/Timer.cpp
+/root/workspace/sasu_intelligentcar_fz3b_c++/src/src/Timer.cpp
 
 /root/workspace/sasu_intelligentcar_fz3b_c++/src/include/detection.hpp
 capture.hpp
@@ -468,6 +470,10 @@ libserial/SerialPort.h
 string.h
 -
 
+/root/workspace/sasu_intelligentcar_fz3b_c++/src/src/Timer.cpp
+chrono
+-
+
 /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/controlcenter_cal.cpp
 fstream
 -
@@ -607,6 +613,8 @@ recognition/ring_recognition.cpp
 /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/recognition/ring_recognition.cpp
 recognition/track_recognition.cpp
 /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/recognition/track_recognition.cpp
+chrono
+-
 iostream
 -
 opencv2/highgui.hpp
@@ -614,6 +622,8 @@ opencv2/highgui.hpp
 opencv2/opencv.hpp
 -
 signal.h
+-
+thread
 -
 unistd.h
 -

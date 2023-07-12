@@ -28,6 +28,9 @@
 #include <opencv2/opencv.hpp>
 #include "../include/common.hpp"
 #include "recognition/track_recognition.cpp"
+// #include "track_recognition.cpp"
+// #include "common.hpp"
+
 using namespace cv;
 using namespace std;
 
@@ -77,8 +80,8 @@ public:
             v_center[2] = {(track.pointsEdgeLeft[track.pointsEdgeLeft.size() * 2 / 3].x + track.pointsEdgeRight[track.pointsEdgeRight.size() * 2 / 3].x) / 2,
                            (track.pointsEdgeLeft[track.pointsEdgeLeft.size() * 2 / 3].y + track.pointsEdgeRight[track.pointsEdgeRight.size() * 2 / 3].y) / 2};
 
-            v_center[3] = {(track.pointsEdgeLeft[track.pointsEdgeLeft.size() - 1].x + track.pointsEdgeRight[track.pointsEdgeRight.size() - 1].x) / 2,
-                           (track.pointsEdgeLeft[track.pointsEdgeLeft.size() - 1].y + track.pointsEdgeRight[track.pointsEdgeRight.size() - 1].y) / 2};
+            v_center[3] = {(track.pointsEdgeLeft[track.pointsEdgeLeft.size() / 4 * 3.8].x + track.pointsEdgeRight[track.pointsEdgeRight.size() / 4 * 3.8].x) / 2,
+                           (track.pointsEdgeLeft[track.pointsEdgeLeft.size() / 4 * 3.8].y + track.pointsEdgeRight[track.pointsEdgeRight.size() / 4 * 3.8].y) / 2};
 
             centerEdge = Bezier(0.03, v_center);
 

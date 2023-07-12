@@ -12,6 +12,7 @@ CMakeFiles/icar.dir/src/icar.cpp.o
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/include/preprocess.hpp
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/include/stop_watch.hpp
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/include/uart.hpp
+ /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/Timer.cpp
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/controlcenter_cal.cpp
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/detection/bridge_detection.cpp
  /root/workspace/sasu_intelligentcar_fz3b_c++/src/src/detection/depot_detection.cpp

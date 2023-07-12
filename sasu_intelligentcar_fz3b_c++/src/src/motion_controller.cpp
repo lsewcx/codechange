@@ -50,6 +50,7 @@ public:
         float speedSlowzone = 1.0;                      // 慢行区行驶速度
         float speedGarage = 1.0;                        // 出入车库速度
         float speedRing = 1.0;                          // 圆环
+        float speedcross = 0.6;
         float runP1 = 0.9;                              // 一阶比例系数：直线控制量
         float runP2 = 0.018;                            // 二阶比例系数：弯道控制量
         float runP3 = 0.0;                              // 三阶比例系数：弯道控制量
@@ -76,7 +77,7 @@ public:
         bool SlowzoneEnable = true;                     // 慢行区使能
         uint16_t circles = 2;                           // 智能车运行圈数
         string pathVideo = "../res/samples/sample.mp4"; // 视频路径
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params,rightP1,rightP2,ringDirection,ringP1,ringP2,speedRing, speedLow, speedHigh, speedDown, speedBridge, speedSlowzone, speedGarage,
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params,speedcross,rightP1,rightP2,ringDirection,ringP1,ringP2,speedRing, speedLow, speedHigh, speedDown, speedBridge, speedSlowzone, speedGarage,
                                        runP1, runP2, runP3, turnP, turnD, debug, saveImage, rowCutUp, rowCutBottom, disGarageEntry,
                                        GarageEnable, BridgeEnable, FreezoneEnable, RingEnable, CrossEnable, GranaryEnable, DepotEnable, FarmlandEnable, SlowzoneEnable, circles, pathVideo); // 添加构造函数
     };
@@ -91,6 +92,7 @@ public:
      */
     void pdController(int controlCenter)
     {
+	float heightest_line = 0;
         float error = controlCenter - COLSIMAGE / 2; // 图像控制中心转换偏差
         static int errorLast = 0;                    // 记录前一次的偏差
         if (abs(error - errorLast) > COLSIMAGE / 10)
@@ -99,12 +101,12 @@ public:
         }
 
         params.turnP = abs(error) * params.runP2 + params.runP1;
-        // turnP = max(turnP,0.2);
-        //  if(turnP<0.2){
-        //      turnP = 0.2;
-        //  }
-        // turnP = runP1 + heightest_line * runP2;
-
+        //params.turnP = max(params.turnP,0.2);
+          //if(params.turnP<0.2){
+            //  params.turnP = 0.2;
+          //}
+	//heightest_line += error;
+         //params.turnP = params.runP1 + heightest_line * params.runP2;
         int pwmDiff = (error * params.turnP) + (error - errorLast) * params.turnD;
         errorLast = error;
 

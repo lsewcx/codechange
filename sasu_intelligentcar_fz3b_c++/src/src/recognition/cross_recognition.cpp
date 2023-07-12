@@ -214,24 +214,33 @@ public:
             for (int i = 2; i < track.widthBlock.size() - 10; i++)
             {
                 // 直入十字判断
-                if (track.spurroad.size() > 0 && track.widthBlock[i].y > COLSIMAGE - 5)
+                // if (track.spurroad.size() > 0 && track.widthBlock[i].y > COLSIMAGE - 5)
+                // {
+                //     counterStrightA++;
+                // }
+                // if (counterStrightA)
+                // {
+                //     counterStrightB++;
+                //     if (counterStrightB > 30)
+                //     {
+                //         counterStrightB = 0;
+                //         counterStrightA = 0;
+                //     }
+                //     if (counterStrightA > 20) // 连续20行全宽
+                //     {
+                //         crossroadType = CrossroadType::CrossroadStraight; // 直入十字
+
+                //         _index = 5;
+                //         break;
+                //     }
+                // }
+
+
+                if(searchStraightCrossroad(track.pointsEdgeLeft,track.pointsEdgeRight))
                 {
-                    counterStrightA++;
-                }
-                if (counterStrightA)
-                {
-                    counterStrightB++;
-                    if (counterStrightB > 30)
-                    {
-                        counterStrightB = 0;
-                        counterStrightA = 0;
-                    }
-                    if (counterStrightA > 20) // 连续20行全宽
-                    {
-                        crossroadType = CrossroadType::CrossroadStraight; // 直入十字
-                        _index = 5;
-                        break;
-                    }
+                    crossroadType = CrossroadType::CrossroadStraight; // 直入十字
+                    _index = 5;
+                    break;
                 }
             }
 

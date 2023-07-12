@@ -252,7 +252,7 @@ public:
         {
             carStoping = true;
             counterRec++;
-            if (counterRec > 20) // 停车：40场 = 2s
+            if (counterRec > 40) // 停车：40场 = 2s
             {
                 carStoping = false;
                 depotStep = DepotStep::DepotExit; // 出站使能

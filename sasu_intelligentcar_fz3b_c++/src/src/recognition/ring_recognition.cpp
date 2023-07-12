@@ -28,7 +28,7 @@
  *          5：出环结束
  */
 
-#include "common.hpp"
+#include "../../include/common.hpp"
 #include "track_recognition.cpp"
 #include <cmath>
 #include <fstream>
@@ -38,6 +38,7 @@
 
 using namespace cv;
 using namespace std;
+
 
 class RingRecognition {
 public:
@@ -62,7 +63,7 @@ public:
    * @param imagePath 赛道路径图像
    */
    bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
-    if (counterShield < 40) {
+    if (counterShield < 80) {
       counterShield++;
       return false;
     }
@@ -128,7 +129,7 @@ public:
       if (track.widthBlock[i].y > track.widthBlock[i - 1].y &&
           track.widthBlock[i].y > COLSIMAGE * 0.6 &&
           track.widthBlock[i].x > 30 &&
-          ((track.stdevLeft > 120 && track.stdevRight < 50) ||
+          ((track.stdevLeft > 120 && track.stdevRight < 42) ||
            ringStep == RingStep::Entering)) // 搜索突然变宽的路径行数
       {
         ++countWide;
@@ -421,6 +422,7 @@ public:
         }
         if (rowBreakpointRight > ROWSIMAGE / 2) {
           ringStep = RingStep::Finish;
+           
         }
       }
     }

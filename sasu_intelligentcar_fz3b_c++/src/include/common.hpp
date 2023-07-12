@@ -6,6 +6,7 @@
 #include <opencv2/highgui.hpp> //OpenCV终端部署
 #include <opencv2/opencv.hpp>  //OpenCV终端部署
 #include "../src/perspective_mapping.cpp"
+#include "../src/Timer.cpp"
 
 using nlohmann::json;
 using namespace std;
@@ -15,9 +16,9 @@ using namespace cv;
 #define ROWSIMAGE 240    // 图像的行数
 #define COLSIMAGEIPM 320 // IPM图像的列数
 #define ROWSIMAGEIPM 400 // IPM图像的行数
-#define PWMSERVOMAX 1870 // 舵机PWM最大值（左）1870是标准值
-#define PWMSERVOMID 1550 // 舵机PWM中值 1540是标准值
-#define PWMSERVOMIN 1170 // 舵机PWM最小值（右）1170是标准值
+#define PWMSERVOMAX 1890 // 舵机PWM最大值（左）1870是标准值
+#define PWMSERVOMID 1560 // 舵机PWM中值 1540是标准值
+#define PWMSERVOMIN 1210 // 舵机PWM最小值（右）1170是标准值
 
 #define LABEL_CONE "cone"           // AI标签：锥桶
 #define LABEL_GRANARY "granary"     // AI标签：谷仓
@@ -30,7 +31,7 @@ using namespace cv;
 
 bool printAiEnable = false;
 PerspectiveMapping ipm; // 逆透视变换公共类
-
+Timer timer;
 struct POINT
 {
     int x = 0;
