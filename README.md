@@ -11,4 +11,4 @@ make camera_calibration -j
 # 模型训练的话可以加我qq或者微信具体询问，我们没有改过人工智能模型，也没换过模型学弟学妹们可以尝试一下。
 
 # 文件最好把 sasu_intelligentcar_fz3b_c++放在workspace里面最好把不要套文件夹否则编译会有问题，或者更改makefile文件也可以
-# !!!没次改代码都编译，改motion.json文件里面的值不需要编译
+# !!!每次改代码都编译，改motion.json文件里面的值不需要编译
