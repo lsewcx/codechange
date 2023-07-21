@@ -43,6 +43,7 @@ bool slowDown = false;                    // 特殊区域减速标志
 uint16_t counterSlowDown = 0;             // 减速计数器
 
 bool allowRingState = true;               // 初始设定允许"圆环状态"
+bool allowStart = false;
 
 void Timer() {
   // 由于第二圈肯定没有圆环所以第一次5秒后禁止圆环后35秒后才解放(除非学弟学妹们车能上2m)
@@ -56,6 +57,11 @@ void Timer() {
 void Timer1() {
   std::this_thread::sleep_for(std::chrono::seconds(5));
   allowRingState = false; // 5秒后取消"圆环状态"
+}
+
+void Timer2(){
+  std::this_thread::sleep_for(std::chrono::seconds(70));
+  allowStart = true;
 }
 
 enum RoadType {
@@ -90,7 +96,7 @@ int main(int argc, char const *argv[]) {
   RoadType roadType = RoadType::BaseHandle; // 初始化赛道类型
   uint16_t counterOutTrackA = 0;            // 车辆冲出赛道计数器A
   uint16_t counterOutTrackB = 0;            // 车辆冲出赛道计数器B
-  uint16_t circlesThis = 1;                 // 智能车当前运行的圈数
+  uint16_t circlesThis = 2;                 // 智能车当前运行的圈数
   uint16_t countercircles = 0;              // 圈数计数器
 
   // USB转串口的设备名为 / dev/ttyUSB0
@@ -138,6 +144,8 @@ int main(int argc, char const *argv[]) {
       ;
     }
     cout << "--------- System start!!! -------" << endl;
+    std::thread timer11(Timer2); // 创建一个新线程来倒计时
+    timer11.detach();
 
     for (int i = 0; i < 30; i++)          // 3秒后发车
     {
@@ -147,6 +155,7 @@ int main(int argc, char const *argv[]) {
   }
 
   while (1) {
+
     bool imshowRec = false; // 特殊赛道图像显示标志
 
     // 处理帧时长监测把debug注释了可以查看处理每一帧画面的速度
@@ -215,7 +224,7 @@ int main(int argc, char const *argv[]) {
         }
 
         if (circlesThis >= motionController.params.circles &&
-            countercircles > 100) // 入库使能：跑完N圈
+            countercircles > 100 && allowStart) // 入库使能：跑完N圈
           garageRecognition.entryEnable = true;
 
         if (garageRecognition.garageRecognition(trackRecognition,

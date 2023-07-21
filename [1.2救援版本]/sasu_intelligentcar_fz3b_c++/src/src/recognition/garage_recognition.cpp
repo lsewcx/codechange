@@ -444,8 +444,8 @@ public:
       track.pointsEdgeLeft = modifyEdge;
 
       startPoint =
-          POINT(ROWSIMAGE - 10, COLSIMAGE * 0.8); // 入库补线起点:固定左下角
-      endPoint = POINT(ROWSIMAGE / 2, 1);         // 入库补线终点
+          POINT(ROWSIMAGE - 10, COLSIMAGE / 2); // 入库补线起点:固定左下角
+      endPoint = POINT(ROWSIMAGE - 10, COLSIMAGE / 2);         // 入库补线终点
       midPoint = POINT((startPoint.x + endPoint.x) / 2,
                        (startPoint.y + endPoint.y) / 2); // 入库补线中点
       repairPoints = {startPoint, midPoint, endPoint};
