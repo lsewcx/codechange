@@ -62,16 +62,16 @@ public:
    * @param imagePath 赛道路径图像
    */
   bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
-    if (counterShield < 40) {
+    if (counterShield < 20) {
       counterShield++;
       return false;
     }
 
     bool ringEnable = false;                    // 判环标志
     RingType ringTypeTemp = RingType::RingNone; // 环岛类型：临时变量
-    int rowBreakpointLeft = 0;  // 边缘拐点起始行（左）
-    int rowBreakpointRight = 0; // 边缘拐点起始行（右）
-    int colEnterRing = 0;       // 入环点（图像列序号）
+    int rowBreakpointLeft = 0;       // 边缘拐点起始行（左）
+    int rowBreakpointRight = 0;      // 边缘拐点起始行（右）
+    int colEnterRing = 0;            // 入环点（图像列序号）
     int rowRepairRingside =
         track.widthBlock.size() - 1; // 环一侧，补线起点（行号）
     int rowRepairStraightside =
@@ -591,4 +591,3 @@ private:
   int rowRepairLine = 0;                  // 用于环补线的点（行号）
   int colRepairLine = 0;                  // 用于环补线的点（列号）
 };
-
