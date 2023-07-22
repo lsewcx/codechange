@@ -50,7 +50,7 @@ public:
    * @param imagePath 赛道路径图像
    */
   bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
-    if (counterShield < 20) { // 修改岔路计数器的数量因为我们是出库接圆环，修改此处可以让出库就识别圆环，如果值变大使用默认值[40]可能导致出库后圆环进不去
+    if (counterShield < 20) { // 修改岔路计数器的数量因为我们是出库接圆环,修改此处可以让出库就识别圆环,如果值变大使用默认值[40]可能导致出库后圆环进不去
       counterShield++;
       return false;
     }
