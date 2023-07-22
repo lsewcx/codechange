@@ -1,24 +1,12 @@
 #pragma once
 /**
- ********************************************************************************************************
- *                                               示例代码
- *                                             EXAMPLE  CODE
- *
- *                      (c) Copyright 2022; SaiShu.Lcc.; Leo;
- *https://bjsstech.com 版权所属[SASU-北京赛曙科技有限公司]
- *
- *            The code is for internal use only, not for commercial
- *transactions(开源学习,请勿商用). The code ADAPTS the corresponding hardware
- *circuit board(代码适配百度Edgeboard-FZ3B), The specific details consult the
- *professional(欢迎联系我们,代码持续更正，敬请关注相关开源渠道).
- *********************************************************************************************************
  * @file ring_recognition.cpp
- * @author Leo ()
+ * @author lse
  * @brief 环岛识别（基于track赛道识别后）
  * @version 0.1
- * @date 2022-02-28
+ * @date 2023-07-21
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2023
  *
  * @note  环岛识别步骤（ringStep）：
  *          1：环岛识别（初始化）
@@ -62,16 +50,16 @@ public:
    * @param imagePath 赛道路径图像
    */
   bool ringRecognition(TrackRecognition &track, Mat &imagePath) {
-    if (counterShield < 40) {
+    if (counterShield < 20) { // 修改岔路计数器的数量因为我们是出库接圆环，修改此处可以让出库就识别圆环，如果值变大使用默认值[40]可能导致出库后圆环进不去
       counterShield++;
       return false;
     }
 
     bool ringEnable = false;                    // 判环标志
     RingType ringTypeTemp = RingType::RingNone; // 环岛类型：临时变量
-    int rowBreakpointLeft = 0;  // 边缘拐点起始行（左）
-    int rowBreakpointRight = 0; // 边缘拐点起始行（右）
-    int colEnterRing = 0;       // 入环点（图像列序号）
+    int rowBreakpointLeft = 0;       // 边缘拐点起始行（左）
+    int rowBreakpointRight = 0;      // 边缘拐点起始行（右）
+    int colEnterRing = 0;            // 入环点（图像列序号）
     int rowRepairRingside =
         track.widthBlock.size() - 1; // 环一侧，补线起点（行号）
     int rowRepairStraightside =
@@ -591,4 +579,3 @@ private:
   int rowRepairLine = 0;                  // 用于环补线的点（行号）
   int colRepairLine = 0;                  // 用于环补线的点（列号）
 };
-
