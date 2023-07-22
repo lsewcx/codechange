@@ -14,3 +14,6 @@ make camera_calibration -j
 ## !!!每次改代码都编译，改motion.json文件里面的值不需要编译
 
 ## https://ai.baidu.com/ai-doc/HWCE/Yk3b86gvp  开发平台和系统烧录都在里面根据教程一步一步走就行
+##系统下载
+链接：https://pan.baidu.com/s/1Qb9TWSsmh3K71vKhw6wyyw 
+提取码：78zf
