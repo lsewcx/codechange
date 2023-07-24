@@ -59,7 +59,7 @@ void Timer1() {
   allowRingState = false; // 5秒后取消"圆环状态"
 }
 
-void Timer2(){
+void Timer2() {
   std::this_thread::sleep_for(std::chrono::seconds(70));
   allowStart = true;
 }
@@ -434,7 +434,26 @@ int main(int argc, char const *argv[]) {
         } else
           roadType = RoadType::BaseHandle;
       }
-      // }
+    }
+
+    // [13] 控制中心计算
+    if (trackRecognition.pointsEdgeLeft.size() < 30 &&
+        trackRecognition.pointsEdgeRight.size() < 30 &&
+        roadType != RoadType::BridgeHandle &&
+        roadType != RoadType::GranaryHandle &&
+        roadType != RoadType::DepotHandle &&
+        roadType != RoadType::FarmlandHandle) // 防止车辆冲出赛道
+    {
+      counterOutTrackA++;
+      counterOutTrackB = 0;
+      if (counterOutTrackA > 20)
+        callbackSignal(0);
+    } else {
+      counterOutTrackB++;
+      if (counterOutTrackB > 50) {
+        counterOutTrackA = 0;
+        counterOutTrackB = 50;
+      }
     }
 
     controlCenterCal.controlCenterCal(
@@ -637,4 +656,3 @@ void slowDownEnable(void) {
   slowDown = true;
   counterSlowDown = 0;
 }
-
