@@ -4,7 +4,7 @@
  * @brief 智能汽车-完全模型组-顶层框架（TOP）
  * @version 0.1
  * @date 2023-7-20
- * @note 欢迎各位完全模型组的小伙伴，共同构建技术框架
+ * @note 增加计时器
  * @copyright Copyright (c) 2023
  *
  */
@@ -59,7 +59,7 @@ void Timer1() {
   allowRingState = false; // 5秒后取消"圆环状态"
 }
 
-void Timer2(){
+void Timer2() {
   std::this_thread::sleep_for(std::chrono::seconds(70));
   allowStart = true;
 }
@@ -145,7 +145,7 @@ int main(int argc, char const *argv[]) {
     }
     cout << "--------- System start!!! -------" << endl;
 
-    std::thread timer11(Timer2); // 创建一个新线程来倒计时
+    std::thread timer11(Timer2);          // 创建一个新线程来倒计时
     timer11.detach();
     for (int i = 0; i < 30; i++)          // 3秒后发车
     {
@@ -437,6 +437,26 @@ int main(int argc, char const *argv[]) {
       // }
     }
 
+    // [13] 控制中心计算
+    if (trackRecognition.pointsEdgeLeft.size() < 30 &&
+        trackRecognition.pointsEdgeRight.size() < 30 &&
+        roadType != RoadType::BridgeHandle &&
+        roadType != RoadType::GranaryHandle &&
+        roadType != RoadType::DepotHandle &&
+        roadType != RoadType::FarmlandHandle) // 防止车辆冲出赛道
+    {
+      counterOutTrackA++;
+      counterOutTrackB = 0;
+      if (counterOutTrackA > 20)
+        callbackSignal(0);
+    } else {
+      counterOutTrackB++;
+      if (counterOutTrackB > 50) {
+        counterOutTrackA = 0;
+        counterOutTrackB = 50;
+      }
+    }
+
     controlCenterCal.controlCenterCal(
         trackRecognition); // 根据赛道边缘信息拟合运动控制中心
 
@@ -637,5 +657,3 @@ void slowDownEnable(void) {
   slowDown = true;
   counterSlowDown = 0;
 }
-
-

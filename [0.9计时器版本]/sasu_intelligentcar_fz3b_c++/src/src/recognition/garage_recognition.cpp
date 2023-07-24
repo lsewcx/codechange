@@ -1,17 +1,5 @@
 #pragma once
 /**
- ********************************************************************************************************
- *                                               示例代码
- *                                             EXAMPLE  CODE
- *
- *                      (c) Copyright 2022; SaiShu.Lcc.; Leo;
- *https://bjsstech.com 版权所属[SASU-北京赛曙科技有限公司]
- *
- *            The code is for internal use only, not for commercial
- *transactions(开源学习,请勿商用). The code ADAPTS the corresponding hardware
- *circuit board(代码适配百度Edgeboard-FZ3B), The specific details consult the
- *professional(欢迎联系我们,代码持续更正，敬请关注相关开源渠道).
- *********************************************************************************************************
  * @file garage_recognition.cpp
  * @author yang_vivian ()
  * @brief 车库识别
@@ -19,7 +7,7 @@
  * @date 2022-03-14
  * @copyright Copyright (c) 2022
  * @note 车库识别步骤:
- *                  [01] 车库标志识别：1）斑马线
+ *                  [01] 车库标志识别：1）斑马线修改过一点
  *                  [02] 赛道左边缘优化,入库点搜索
  *                  [03] 入库路径优化
  *
@@ -502,6 +490,7 @@ public:
 
       if (track.pointsEdgeRight[rowBreakRight].x <
           ROWSIMAGE * 0.65) // 避免出库提前转向优化
+                            // 0.65需要根据出库速度来改减少出库压弯的问题
       {
         track.pointsEdgeRight.resize(rowBreakRight);
         if (rowBreakLeft > rowBreakRight)

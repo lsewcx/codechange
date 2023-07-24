@@ -4,7 +4,7 @@
  * @brief 智能汽车-完全模型组-顶层框架（TOP）
  * @version 0.1
  * @date 2023-7-20
- * @note 欢迎各位完全模型组的小伙伴，共同构建技术框架
+ * @note 添加计时器防止误判
  * @copyright Copyright (c) 2023
  *
  */
@@ -186,9 +186,10 @@ int main(int argc, char const *argv[]) {
     Mat imageBinary = imagePreprocess.imageBinaryzation(imgaeCorrect); // Gray
 
     //[03] 基础赛道识别
-    trackRecognition.trackRecognition(imageBinary); // 赛道线识别
+    trackRecognition.trackRecognition(
+        imageBinary); // 赛道线识别   可以尝试修改成八领域巡线
     if (motionController.params.debug) {
-      Mat imageTrack = imgaeCorrect.clone();        // RGB
+      Mat imageTrack = imgaeCorrect.clone(); // RGB
       trackRecognition.drawImage(imageTrack); // 图像显示赛道线识别结果
       imshow("imageTrack", imageTrack);
       savePicture(imageTrack);
@@ -375,7 +376,7 @@ int main(int argc, char const *argv[]) {
       }
     }
 
-    // [10] 泛行区检测与识别
+    // [10] 泛行区检测与识别（无泛行区）
     if (motionController.params.FreezoneEnable) // 赛道元素是否使能
     {
       if (roadType == RoadType::FreezoneHandle ||
@@ -434,26 +435,7 @@ int main(int argc, char const *argv[]) {
         } else
           roadType = RoadType::BaseHandle;
       }
-    }
-
-    // [13] 控制中心计算
-    if (trackRecognition.pointsEdgeLeft.size() < 30 &&
-        trackRecognition.pointsEdgeRight.size() < 30 &&
-        roadType != RoadType::BridgeHandle &&
-        roadType != RoadType::GranaryHandle &&
-        roadType != RoadType::DepotHandle &&
-        roadType != RoadType::FarmlandHandle) // 防止车辆冲出赛道
-    {
-      counterOutTrackA++;
-      counterOutTrackB = 0;
-      if (counterOutTrackA > 20)
-        callbackSignal(0);
-    } else {
-      counterOutTrackB++;
-      if (counterOutTrackB > 50) {
-        counterOutTrackA = 0;
-        counterOutTrackB = 50;
-      }
+      // }
     }
 
     controlCenterCal.controlCenterCal(
@@ -465,7 +447,7 @@ int main(int argc, char const *argv[]) {
       // 智能汽车方向控制
       if (roadType != RoadType::RingHandle)
         motionController.pdController(
-            controlCenterCal.controlCenter); // PD控制器姿态控制
+            controlCenterCal.controlCenter); // PD控制器姿态控制圆环pid单独控制
       else if (roadType == RoadType::RingHandle) {
         if (motionController.params.ringDirection == 0)
           motionController.RingpdController(controlCenterCal.controlCenter);
