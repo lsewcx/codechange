@@ -6,7 +6,6 @@
 #include <opencv2/highgui.hpp> //OpenCV终端部署
 #include <opencv2/opencv.hpp>  //OpenCV终端部署
 #include "../src/perspective_mapping.cpp"
-#include "../src/Timer.cpp"
 
 using nlohmann::json;
 using namespace std;
