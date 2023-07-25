@@ -438,6 +438,29 @@ int main(int argc, char const *argv[]) {
       // }
     }
 
+     // [13] 控制中心计算
+    if (trackRecognition.pointsEdgeLeft.size() < 30 &&
+        trackRecognition.pointsEdgeRight.size() < 30 &&
+        roadType != RoadType::BridgeHandle &&
+        roadType != RoadType::GranaryHandle &&
+        roadType != RoadType::DepotHandle &&
+        roadType != RoadType::FarmlandHandle) // 防止车辆冲出赛道
+    {
+      counterOutTrackA++;
+      counterOutTrackB = 0;
+      if (counterOutTrackA > 20)
+        callbackSignal(0);
+    }
+    else
+    {
+      counterOutTrackB++;
+      if (counterOutTrackB > 50)
+      {
+        counterOutTrackA = 0;
+        counterOutTrackB = 50;
+      }
+    }
+
     controlCenterCal.controlCenterCal(
         trackRecognition); // 根据赛道边缘信息拟合运动控制中心
 
