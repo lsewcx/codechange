@@ -6,6 +6,7 @@ make camera_display -j
 ## camera_calibration相机标定用于去畸变
 make camera_calibration -j
 ## 运行都是./应用程序名字
+例如./icar icar是主程序具体可以看makefile文件里面
 
 ## 模型训练的话可以加我qq或者微信具体询问，我们没有改过人工智能模型，也没换过模型学弟学妹们可以尝试一下，误识别的情况很严重特别是斑马线计时器就是为了防斑马线误判。
 
