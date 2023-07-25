@@ -16,9 +16,9 @@ using namespace cv;
 #define ROWSIMAGE 240    // 图像的行数
 #define COLSIMAGEIPM 320 // IPM图像的列数
 #define ROWSIMAGEIPM 400 // IPM图像的行数
-#define PWMSERVOMAX 1910 // 舵机PWM最大值（左）1870是标准值
-#define PWMSERVOMID 1560 // 舵机PWM中值 1540是标准值
-#define PWMSERVOMIN 1210 // 舵机PWM最小值（右）1170是标准值
+#define PWMSERVOMAX 1910 // 舵机PWM最大值（左）
+#define PWMSERVOMID 1560 // 舵机PWM中值 
+#define PWMSERVOMIN 1210 // 舵机PWM最小值（右）
 
 #define LABEL_CONE "cone"           // AI标签：锥桶
 #define LABEL_GRANARY "granary"     // AI标签：谷仓
